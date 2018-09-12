@@ -20,13 +20,16 @@ create_eos_cpp (){
     cpp_file=$1.cpp
     hpp_file=$1.hpp 
     include_shield=$(echo "$1_HPP" | tr '[:lower:]' '[:upper:]')
+    
     add_license $1 $cpp_file 
     add_license $1 $hpp_file
+
     echo $INCLUDE >> $cpp_file  
-    echo $INCLUDE >> $hpp_file 
-    echo >> $hpp_file
+   
     echo "#ifndef $include_shield" >> $hpp_file
     echo "#define $include_shield" >> $hpp_file
+    echo >> $hpp_file
+    echo $INCLUDE >> $hpp_file 
     echo >> $hpp_file 
     echo "#endif // $include_shield" >> $hpp_file
 }

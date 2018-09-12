@@ -12,6 +12,8 @@
 #					the private key provided 
 #		clean		removes all files that are added during the compilation 
 #					process 
+#		get			Shows all the accounts currently registered to the public 
+# 					key
 
 WALLET_KEY=PW5KYZMUPboZPPhHMj52VyrBWRmcfs5C5wdN2ePZGfDSANxHJkcFr
 PRIVATE_KEY=5K7rA7Xmkwh66ScwMVvmKFJWiS5SDy1c4rt1At2AMGZnYCifWUv
@@ -42,9 +44,9 @@ test: $(ABI_FILE)
 	cleos push action $(CONTRACT_NAME) hi '["user"]' -p user@active
 
 create:
+	cleos create account eosio tic.tac.usr $(PUBLIC_KEY)
+	cleos create account eosio tic.tac.test $(PUBLIC_KEY) 
 	cleos create account eosio $(ACCOUNT_NAME) $(PUBLIC_KEY)
-	cleos create account eosio tester $(PUBLIC_KEY)
-	cleos create account eosio user $(PUBLIC_KEY) 
 
 node:
 	gnome-terminal -- nodeos -e -p eosio --plugin eosio::chain_api_plugin\
@@ -57,3 +59,6 @@ clean:
 unlock:
 	cleos wallet unlock --password $(WALLET_KEY)
 	cleos wallet import --private-key $(PRIVATE_KEY)
+
+get:
+	cleos get accounts $(PUBLIC_KEY)
