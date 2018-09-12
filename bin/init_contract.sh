@@ -19,7 +19,7 @@ create_eos_cpp (){
     INCLUDE="#include <eosiolib/eosio.hpp>"
     cpp_file=$1.cpp
     hpp_file=$1.hpp 
-    include_shield=$(echo "$1_$hpp_file" | tr '[:lower:]' '[:upper:]')
+    include_shield=$(echo "$1_HPP" | tr '[:lower:]' '[:upper:]')
     add_license $1 $cpp_file 
     add_license $1 $hpp_file
     echo $INCLUDE >> $cpp_file  
@@ -28,7 +28,7 @@ create_eos_cpp (){
     echo "#ifndef $include_shield" >> $hpp_file
     echo "#define $include_shield" >> $hpp_file
     echo >> $hpp_file 
-    echo "#endif $include_shield" >> $hpp_file
+    echo "#endif // $include_shield" >> $hpp_file
 }
     
 
@@ -42,8 +42,11 @@ contract_name=$(basename $1)
 
 mkdir $1 
 cd $1 
+cp ../Makefile Makefile
+
+rc_extension="_rc.md"
+touch "$contract_name$rc_extension"
 
 create_eos_cpp $contract_name 
 
-cp ../Makefile Makefile 
 
