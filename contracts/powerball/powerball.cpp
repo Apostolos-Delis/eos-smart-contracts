@@ -21,8 +21,8 @@ void powerball::buy(const account_name& buyer,
         for (size_t i = 0; i < TICKET_LENGTH; i++){
             eosio_assert(ticket[i] > 0, "Ticket numbers must be positive!");
         }
-        for (size_t i = 0; i < TICKET_LENGTH; i++){
-            eosio_assert(ticket[i] <= MAX_POWERBALL_NUMBER, 
+        for (size_t i = 0; i < TICKET_LENGTH - 1; i++){
+            eosio_assert(ticket[i] <= MAX_NUMBER, 
                     "Invalid number for ball!");
         }
         eosio_assert(ticket[TICKET_LENGTH-1] < MAX_POWERBALL_NUMBER, 
@@ -125,31 +125,31 @@ void powerball::claim(const account_name& claimer,
         }
 
         switch (num_matches){
-            case 5:
-                payout += 40000; //1000 ETH
+            case TICKET_LENGTH - 1:
+                payout += 1000.0_eth; //1000 ETH
                 break;
-            case 4:
+            case TICKET_LENGTH - 2:
                 if (powerball_matches){
-                    payout += 2000; //50 ETH
+                    payout += 50.0_eth; //50 ETH
                 } else {
-                    payout += 4; //0.1 ETH
+                    payout += 0.1_eth; //0.1 ETH
                 }
                 break;
-            case 3:
+            case TICKET_LENGTH - 3:
                 if (powerball_matches){
-                    payout += 4; //0.1 ETH
+                    payout += 0.1_eth; //0.1 ETH
                 } else {
-                    payout += 0.28; //0.007 ETH
+                    payout += 0.007_eth; //0.007 ETH
                 }
                 break;
-            case 2:
+            case TICKET_LENGTH -4:
                 if (powerball_matches){
-                    payout += 0.28; //0.007 ETH
+                    payout += 0.007_eth; //0.007 ETH
                 } 
                 break;
             default:
                 if (powerball_matches){
-                    payout += 0.16; //0.004 ETH
+                    payout += 0.004_eth; //0.004 ETH
                 }
                 break;
         }
@@ -170,7 +170,7 @@ std::vector<ticket_t> powerball::tickets_for(const int64_t& round_num,
 }
 
 //@abi action
-ticket_t powerball::winning_nums(const int64_t& round_num){
+ticket_t powerball::winning_nums(const int64_t& round_num) const {
     //Assert current round_num exists
     auto itr = this->rounds.find(round_num);
     eosio_assert(itr != this->rounds.end(), "Round doesn't exist");
@@ -179,7 +179,4 @@ ticket_t powerball::winning_nums(const int64_t& round_num){
 }
 
 
-
-
-
-EOSIO_ABI( powerball, (buy)(draw_numbers))
+EOSIO_ABI( powerball, (buy)(draw_numbers)(claim)(tickets_for)(winning_nums))

@@ -20,3 +20,6 @@
 *.a
 *.lib
 
+# Temporary
+**/tmp/ 
+**/temp.*

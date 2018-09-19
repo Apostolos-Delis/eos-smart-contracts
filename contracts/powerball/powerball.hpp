@@ -14,7 +14,11 @@
 #include <eosiolib/crypto.h> //For randomization
 using namespace eosio;
 
-const double TICKET_PRICE = 0.5;  //Set to 0.5 EOS
+//Set the value of eth = 40 eos
+constexpr long double operator"" _eos( long double amt) { return amt; }
+constexpr long double operator"" _eth( long double amt) { return amt * 40; }
+
+const double TICKET_PRICE = 0.5_eos;  //Set to 0.5 EOS
 const uint8_t MAX_NUMBER = 69;
 const uint8_t MAX_POWERBALL_NUMBER = 26;
 const uint8_t ROUND_LENGTH = 15;
@@ -56,7 +60,18 @@ public:
         ticket_t                              winning_nums;
         std::map<account_name, std::vector<ticket_t>> ticket_table;
 
-        auto primary_key() const { return round_num; } EOSLIB_SERIALIZE( Round, (round_num)(end_time)(draw_block)(winning_nums)(ticket_table)) }; /// @brief Keep track of the current round 
+        int64_t primary_key() const { return round_num; }
+        EOSLIB_SERIALIZE( Round, (round_num)(end_time)(draw_block)(winning_nums)(ticket_table))
+    };
+
+   
+    /**
+     * @brief Information related to a single round
+     * @abi table games i64
+     */
+    //TODO: Create Table Struct
+
+    /// @brief Keep track of the current round 
     int64_t current_round;
     int64_t balance;
 
@@ -83,9 +98,7 @@ public:
                                       const account_name& user) const;
 
     //@abi action
-    ticket_t powerball::winning_nums(const int64_t& round_num);
-   
-
+    ticket_t winning_nums(const int64_t& round_num) const;
 };
 
 #endif // POWERBALL_HPP
