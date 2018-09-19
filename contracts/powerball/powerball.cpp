@@ -5,7 +5,20 @@
 //
 
 #include "powerball.hpp"  
-    
+
+//Allow for quick lookup of an account's tickets in
+// a single round
+template<typename T, typename K>
+std::size_t find(std::vector<T> vec, K key){
+
+    for (size_t i = 0; i < vec.size(); i++){
+        if (vec[i].primary_key() == key) {
+            return i;
+        }
+    }
+    return -1;
+}            
+
 
 //@abi action
 void powerball::buy(const account_name& buyer,
@@ -47,11 +60,24 @@ void powerball::buy(const account_name& buyer,
 
     for (auto& ticket : tickets){
         this->rounds.modify(itr, buyer, [&](auto& t){
-                t.ticket_table[buyer].push_back(ticket);
+                size_t account_entry_index = find(t.ticket_table, buyer);
+
+                //if account hasn't bought anything yet, register account
+                if (account_entry_index == -1) {
+                    std::vector<ticket_t> buyer_entry;
+                    buyer_entry.push_back(ticket);
+                    t.ticket_table.push_back({buyer, buyer_entry}); 
+                   
+                } else {
+                    //add ticket to vector for that user
+                    t.ticket_table[account_entry_index].account_tickets.push_back(ticket);
+                }
         });
     }
 
+    //TODO: Actually add the value to the smart contract balance
     //add the amount paid to the smart contract balance
+    //eosio::tr
     this->balance += amount_paid;
 }
 
@@ -95,12 +121,13 @@ void powerball::claim(const account_name& claimer,
     //Assert current round_num exists
     auto itr = this->rounds.find(round_num);
     eosio_assert(itr != this->rounds.end(), "Round doesn't exist");
-    const auto my_numbers = itr->ticket_table[claimer];
-    eosio_assert(my_numbers.size() > 0, 
-                "Player doesn't exist!");
+    
+    size_t claimer_index = find(itr->ticket_table, claimer);
+    const auto my_numbers = itr->ticket_table[claimer_index].account_tickets;
+
+    eosio_assert(claimer_index != -1, "Player doesn't exist!");
     eosio_assert(itr->winning_nums[0] != 0, "Numbers not drawn yet!");
 
-    //TODO: use BOOST for map
     int64_t payout = 0;
     for (auto&& ticket : my_numbers){
         unsigned int num_matches = 0;
@@ -157,7 +184,8 @@ void powerball::claim(const account_name& claimer,
     }
     //TODO: Transfer money
     this->balance -= payout;
-    itr->ticket_table.erase(claimer);
+    auto claimer_iterator = itr->ticket_table.begin() + claimer_index;
+    itr->ticket_table.erase(claimer_iterator);
 
 }
 //@abi action
@@ -166,7 +194,8 @@ std::vector<ticket_t> powerball::tickets_for(const int64_t& round_num,
     //Assert current round_num exists
     auto itr = this->rounds.find(round_num);
     eosio_assert(itr != this->rounds.end(), "Round doesn't exist");
-    return itr->ticket_table[user];
+    size_t user_index = find(itr->ticket_table, user);
+    return itr->ticket_table[user_index].account_tickets;
 }
 
 //@abi action

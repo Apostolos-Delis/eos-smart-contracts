@@ -11,6 +11,7 @@
 
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/transaction.hpp> //for tapos_block_num()
+#include <eosiolib/eosio.token> // For sending EOS
 #include <eosiolib/crypto.h> //For randomization
 using namespace eosio;
 
@@ -45,6 +46,18 @@ public:
     }
 
     /**
+     * @brief Information related a single user on a single round
+     * @abi table ticket_entry i64
+     */
+    struct ticket_entry {
+        account_name             account;
+        std::vector<ticket_t>    account_tickets;
+
+        account_name primary_key() const { return account; }
+        EOSLIB_SERIALIZE( ticket_entry, (account)(account_tickets))
+    };
+
+    /**
      * @brief Information related to a single round
      * @abi table games i64
      */
@@ -58,18 +71,11 @@ public:
         time                                  end_time;
         int64_t                               draw_block;
         ticket_t                              winning_nums;
-        std::map<account_name, std::vector<ticket_t>> ticket_table;
+        std::vector<ticket_entry>             ticket_table;
 
         int64_t primary_key() const { return round_num; }
         EOSLIB_SERIALIZE( Round, (round_num)(end_time)(draw_block)(winning_nums)(ticket_table))
     };
-
-   
-    /**
-     * @brief Information related to a single round
-     * @abi table games i64
-     */
-    //TODO: Create Table Struct
 
     /// @brief Keep track of the current round 
     int64_t current_round;
