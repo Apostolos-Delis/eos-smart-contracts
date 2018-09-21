@@ -11,7 +11,7 @@
 
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/transaction.hpp> //for tapos_block_num()
-#include <eosiolib/eosio.token> // For sending EOS
+//#include <eosiolib/eosio.token> // For sending EOS
 #include <eosiolib/crypto.h> //For randomization
 using namespace eosio;
 
@@ -93,18 +93,16 @@ public:
              const int64_t& amount_paid);
 
     //@abi action
-    void draw_numbers(const int64_t& round_num);
+    void drawnumbers(const int64_t& round_num);
 
     //@abi action
     void claim(const account_name& claimer, 
                const int64_t& round_num);
 
-    //@abi action
-    std::vector<ticket_t> tickets_for(const int64_t& round_num,
+    std::vector<ticket_t> ticketsfor(const int64_t& round_num,
                                       const account_name& user) const;
 
-    //@abi action
-    ticket_t winning_nums(const int64_t& round_num) const;
+    ticket_t winningnums(const int64_t& round_num) const;
 };
 
 #endif // POWERBALL_HPP

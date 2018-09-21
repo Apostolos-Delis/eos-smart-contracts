@@ -82,7 +82,7 @@ void powerball::buy(const account_name& buyer,
 }
 
 //@abi action
-void powerball::draw_numbers(const int64_t& round_num){
+void powerball::drawnumbers(const int64_t& round_num){
     //Assert current round_num exists
     auto itr = this->rounds.find(round_num);
     eosio_assert(itr != this->rounds.end(), "Round doesn't exist");
@@ -184,12 +184,13 @@ void powerball::claim(const account_name& claimer,
     }
     //TODO: Transfer money
     this->balance -= payout;
+    //TODO: get const iterator to be regular iterator
     auto claimer_iterator = itr->ticket_table.begin() + claimer_index;
-    itr->ticket_table.erase(claimer_iterator);
+    //itr->ticket_table.erase(claimer_iterator);
 
 }
-//@abi action
-std::vector<ticket_t> powerball::tickets_for(const int64_t& round_num,
+
+std::vector<ticket_t> powerball::ticketsfor(const int64_t& round_num,
                                              const account_name& user) const {
     //Assert current round_num exists
     auto itr = this->rounds.find(round_num);
@@ -198,8 +199,7 @@ std::vector<ticket_t> powerball::tickets_for(const int64_t& round_num,
     return itr->ticket_table[user_index].account_tickets;
 }
 
-//@abi action
-ticket_t powerball::winning_nums(const int64_t& round_num) const {
+ticket_t powerball::winningnums(const int64_t& round_num) const {
     //Assert current round_num exists
     auto itr = this->rounds.find(round_num);
     eosio_assert(itr != this->rounds.end(), "Round doesn't exist");
@@ -208,4 +208,4 @@ ticket_t powerball::winning_nums(const int64_t& round_num) const {
 }
 
 
-EOSIO_ABI( powerball, (buy)(draw_numbers)(claim)(tickets_for)(winning_nums))
+EOSIO_ABI( powerball, (buy)(drawnumbers)(claim)(ticketsfor)(winningnums))
