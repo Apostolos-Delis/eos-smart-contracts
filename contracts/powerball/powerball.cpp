@@ -46,7 +46,7 @@ void powerball::buy(const account_name& buyer,
             for (size_t j = 0; j < TICKET_LENGTH - 1; j++){
 
 				eosio_assert(ticket[i] == ticket[j] && i != j,
-					"Must have unique elements for the ticket entry")
+					"Must have unique elements for the ticket entry");
 			}
 		}
     }
