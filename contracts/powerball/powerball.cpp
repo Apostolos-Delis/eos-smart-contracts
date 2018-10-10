@@ -41,9 +41,9 @@ void powerball::buy(const account_name& buyer,
         eosio_assert(ticket[TICKET_LENGTH-1] < MAX_POWERBALL_NUMBER, 
                 "Invalid Length of powerball!");
 		
-        for (size_t i = 0; i < TICKET_LENGTH - 1; i++){
+        for (size_t i = 0; i < TICKET_LENGTH; i++){
             
-            for (size_t j = 0; j < TICKET_LENGTH - 1; j++){
+            for (size_t j = i+1; j < TICKET_LENGTH ; j++){
 
 				eosio_assert(ticket[i] == ticket[j] && i != j,
 					"Must have unique elements for the ticket entry");
