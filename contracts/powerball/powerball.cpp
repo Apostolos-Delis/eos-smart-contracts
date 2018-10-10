@@ -40,6 +40,15 @@ void powerball::buy(const account_name& buyer,
         }
         eosio_assert(ticket[TICKET_LENGTH-1] < MAX_POWERBALL_NUMBER, 
                 "Invalid Length of powerball!");
+		
+        for (size_t i = 0; i < TICKET_LENGTH - 1; i++){
+            
+            for (size_t j = 0; j < TICKET_LENGTH - 1; j++){
+
+				eosio_assert(ticket[i] == ticket[j] && i != j,
+					"Must have unique elements for the ticket entry")
+			}
+		}
     }
 
     auto itr = this->rounds.find(this->current_round);
@@ -134,7 +143,7 @@ void powerball::claim(const account_name& claimer,
         
         for (size_t i = 0; i < TICKET_LENGTH - 1; i++){
             
-            for (size_t j = i; j < TICKET_LENGTH - 1; j++){
+            for (size_t j = 0; j < TICKET_LENGTH - 1; j++){
 
                 if (ticket[i] == itr->winning_nums[j]){
                     num_matches++;
