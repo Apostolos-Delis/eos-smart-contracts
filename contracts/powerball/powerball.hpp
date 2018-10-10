@@ -99,10 +99,6 @@ public:
     void claim(const account_name& claimer, 
                const int64_t& round_num);
 
-    std::vector<ticket_t> ticketsfor(const int64_t& round_num,
-                                      const account_name& user) const;
-
-    ticket_t winningnums(const int64_t& round_num) const;
 };
 
 #endif // POWERBALL_HPP

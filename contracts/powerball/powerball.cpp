@@ -134,7 +134,7 @@ void powerball::claim(const account_name& claimer,
         
         for (size_t i = 0; i < TICKET_LENGTH - 1; i++){
             
-            for (size_t j = 0; j < TICKET_LENGTH - 1; j++){
+            for (size_t j = i; j < TICKET_LENGTH - 1; j++){
 
                 if (ticket[i] == itr->winning_nums[j]){
                     num_matches++;
@@ -190,22 +190,5 @@ void powerball::claim(const account_name& claimer,
 
 }
 
-std::vector<ticket_t> powerball::ticketsfor(const int64_t& round_num,
-                                             const account_name& user) const {
-    //Assert current round_num exists
-    auto itr = this->rounds.find(round_num);
-    eosio_assert(itr != this->rounds.end(), "Round doesn't exist");
-    size_t user_index = find(itr->ticket_table, user);
-    return itr->ticket_table[user_index].account_tickets;
-}
 
-ticket_t powerball::winningnums(const int64_t& round_num) const {
-    //Assert current round_num exists
-    auto itr = this->rounds.find(round_num);
-    eosio_assert(itr != this->rounds.end(), "Round doesn't exist");
-
-    return itr->winning_nums;
-}
-
-
-EOSIO_ABI( powerball, (buy)(drawnumbers)(claim)(ticketsfor)(winningnums))
+EOSIO_ABI( powerball, (buy)(drawnumbers)(claim))
